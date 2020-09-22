@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PoeTools.Bundles.Lib;
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
@@ -26,8 +27,11 @@ namespace PoeTools.Bundles.CLI
 
 			private static void executeCommand(FileInfo bundleFile)
 			{
-				Console.WriteLine("Executing command bundle.info");
-				Console.WriteLine($"Bundlefile: {bundleFile}");
+				var bundle = new Bundle(bundleFile.FullName);
+
+				Console.WriteLine($"Name:              {bundle.Name}");
+				Console.WriteLine($"Blocks:            {bundle.BlockCount}");
+				Console.WriteLine($"Uncompressed size: {bundle.UncompressedSize} bytes");
 			}
 		}
 
@@ -79,7 +83,6 @@ namespace PoeTools.Bundles.CLI
 
 			if (parsed.Item1 > parsed.Item2)
 			{
-				Console.WriteLine("wtf");
 				return "Invalid slice, 'to' must be smaller than 'from'.";
 			}
 
