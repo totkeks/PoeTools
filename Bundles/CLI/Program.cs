@@ -1,7 +1,9 @@
 ﻿using PoeTools.Bundles.Lib;
 using System;
 using System.CommandLine;
+using System.CommandLine.Parsing;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace PoeTools.Bundles.CLI
 {
@@ -11,8 +13,8 @@ namespace PoeTools.Bundles.CLI
 		{
 			var rootCommand = new RootCommand("CLI for Path of Exile binary bundles and indices.");
 
+			rootCommand.AddCommand(new BundleCommand());
 			setupIndexCommand(rootCommand);
-			setupBundleCommand(rootCommand);
 
 			return rootCommand.Invoke(args);
 		}
@@ -52,44 +54,6 @@ namespace PoeTools.Bundles.CLI
 			indexCommand.Add(extractCommand);
 
 			rootCommand.Add(indexCommand);
-		}
-
-		static void setupBundleCommand(RootCommand rootCommand)
-		{
-			var bundleCommand = new Command("bundle", "Access bundles.bin files");
-			bundleCommand.AddAlias("b");
-
-			var bundleFile = new Argument<FileInfo>("bundleFile", "Path to the bundle file");
-
-			var infoCommand = new Command("info", "Display information about the bundle")
-			{
-				bundleFile
-			};
-			bundleCommand.Add(infoCommand);
-
-			var extractCommand = new Command("extract", "Extract data from the bundle")
-			{
-				bundleFile,
-				new Argument<FileInfo>("outputFile", "Path to the output file"),
-				new Option<bool>(new[] {"-a", "--all" }, "Extract all data"),
-				new Option<int>(new[] {"-b", "--block"}, "Extract a specific block (0-indexed)"),
-				new Option<string>(new[] {"-s", "--slice"}, "Extract a slice of data (syntax: 'from,to'; to is exclusive)"),
-			};
-
-			extractCommand.AddValidator(commandResult =>
-			{
-				if (commandResult.Children.Contains("all") && commandResult.Children.Contains("block")
-					|| commandResult.Children.Contains("all") && commandResult.Children.Contains("slice")
-					|| commandResult.Children.Contains("block") && commandResult.Children.Contains("slice"))
-				{
-					return "Options '--all', '--block' and '--slice' cannot be used together.";
-				}
-
-				return null;
-			});
-			bundleCommand.Add(extractCommand);
-
-			rootCommand.Add(bundleCommand);
 		}
 	}
 }
