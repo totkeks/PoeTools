@@ -16,6 +16,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib", "Bundles\Lib\Lib.cspr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI", "Bundles\CLI\CLI.csproj", "{481CF862-8B96-442E-BEE6-D2DAC9E7E95E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Util", "Util", "{DF9A74D8-A28D-410D-859B-37E36DABB74E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oodle", "Util\Oodle\Oodle.csproj", "{D3AE292B-AE32-4B66-A348-CFE01A52F6EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +34,10 @@ Global
 		{481CF862-8B96-442E-BEE6-D2DAC9E7E95E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{481CF862-8B96-442E-BEE6-D2DAC9E7E95E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{481CF862-8B96-442E-BEE6-D2DAC9E7E95E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3AE292B-AE32-4B66-A348-CFE01A52F6EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3AE292B-AE32-4B66-A348-CFE01A52F6EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3AE292B-AE32-4B66-A348-CFE01A52F6EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3AE292B-AE32-4B66-A348-CFE01A52F6EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,6 +45,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{9BD9B2E7-7F82-4F93-AACB-5EB7BA61BEE2} = {1730B463-3443-4115-94F0-CB806CF8DC5E}
 		{481CF862-8B96-442E-BEE6-D2DAC9E7E95E} = {1730B463-3443-4115-94F0-CB806CF8DC5E}
+		{D3AE292B-AE32-4B66-A348-CFE01A52F6EB} = {DF9A74D8-A28D-410D-859B-37E36DABB74E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E6D5179E-B86F-41B1-92BC-A443AB3B5FFE}
