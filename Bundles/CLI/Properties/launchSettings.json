@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CLI": {
+      "commandName": "Project",
+      "commandLineArgs": "bundle extract -s 50,2000 'D:\\Games\\Steam\\steamapps\\common\\Path of Exile\\Bundles2\\Data.bundle.bin' foo.bin"
+    }
+  }
+}
