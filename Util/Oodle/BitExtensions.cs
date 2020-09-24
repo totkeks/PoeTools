@@ -2,17 +2,48 @@ using System;
 
 namespace PoeTools.Util.ExtensionMethods
 {
-	public static class BitExtensions
+	// internal interface IBitExtensions<T> {
+	// 	bool GetBit(T self, int index);
+	// 	T GetBits(T self, int amount, int offset);
+	// 	T SetBit(T self, int index);
+	// 	T UnsetBit(T self, int index);
+	// }
+
+	public static class LongBitExtensions
 	{
-		/* Int */
-		public static bool SelectBit(this int self, int index)
+		public static bool GetBit(this long self, int index)
 		{
 			return Convert.ToBoolean((self >> (index - 1)) & 1);
 		}
 
-		public static int SelectBits(this int self, int amount, int offset = 0)
+		public static long GetBits(this long self, int amount, int offset = 0)
 		{
-			return (self >> offset) & (2 << amount - 1);
+			return (self >> offset) & ((1 << amount) - 1);
+		}
+
+		public static long SetBit(this long self, int index)
+		{
+#pragma warning disable CS0675 // Bitwise-or operator used on a sign-extended operand
+			return self | (1 << (index - 1));
+#pragma warning restore CS0675 // Bitwise-or operator used on a sign-extended operand
+		}
+
+		public static long UnsetBit(this long self, int index)
+		{
+			return self & ~(1 << (index - 1));
+		}
+	}
+
+	public static class IntBitExtensions
+	{
+		public static bool GetBit(this int self, int index)
+		{
+			return Convert.ToBoolean((self >> (index - 1)) & 1);
+		}
+
+		public static int GetBits(this int self, int amount, int offset = 0)
+		{
+			return (self >> offset) & ((1 << amount) - 1);
 		}
 
 		public static int SetBit(this int self, int index)
@@ -24,26 +55,122 @@ namespace PoeTools.Util.ExtensionMethods
 		{
 			return self & ~(1 << (index - 1));
 		}
+	}
 
-		public static ushort SetBit(this ushort self, int index)
-		{
-			return (ushort)(self | (1 << (index - 1)));
-		}
-
-		public static ushort UnsetBit(this ushort self, int index)
-		{
-			return (ushort)(self & ~(1 << (index - 1)));
-		}
-
-		/* Bool */
-		public static bool SelectBit(this byte self, int index)
+	public static class ShortBitExtensions
+	{
+		public static bool GetBit(this short self, int index)
 		{
 			return Convert.ToBoolean((self >> (index - 1)) & 1);
 		}
 
-		public static int SelectBits(this byte self, int amount, int offset = 0)
+		public static short GetBits(this short self, int amount, int offset = 0)
 		{
-			return (self >> offset) & (2 << amount - 1);
+			return (short)((self >> offset) & ((1 << amount) - 1));
+		}
+
+		public static short SetBit(this short self, int index)
+		{
+#pragma warning disable CS0675 // Bitwise-or operator used on a sign-extended operand
+			return (short)(self | (1 << (index - 1)));
+#pragma warning restore CS0675 // Bitwise-or operator used on a sign-extended operand
+		}
+
+		public static short UnsetBit(this short self, int index)
+		{
+			return (short)(self & ~(1 << (index - 1)));
+		}
+	}
+
+	public static class ULongBitExtensions
+	{
+		public static bool GetBit(this ulong self, int index)
+		{
+			return Convert.ToBoolean((self >> (index - 1)) & 1);
+		}
+
+		public static ulong GetBits(this ulong self, int amount, int offset = 0)
+		{
+			return (self >> offset) & ((1UL << amount) - 1);
+		}
+
+		public static ulong SetBit(this ulong self, int index)
+		{
+			return self | (1UL << (index - 1));
+		}
+
+		public static ulong UnsetBit(this ulong self, int index)
+		{
+			return self & ~(1UL << (index - 1));
+		}
+	}
+
+	public static class UIntBitExtensions
+	{
+		public static bool GetBit(this uint self, int index)
+		{
+			return Convert.ToBoolean((self >> (index - 1)) & 1);
+		}
+
+		public static uint GetBits(this uint self, int amount, int offset = 0)
+		{
+			return (self >> offset) & ((1U << amount) - 1);
+		}
+
+		public static uint SetBit(this uint self, int index)
+		{
+			return self | (1U << (index - 1));
+		}
+
+		public static uint UnsetBit(this uint self, int index)
+		{
+			return self & ~(1U << (index - 1));
+		}
+	}
+
+	public static class UShortBitExtensions
+	{
+		public static bool GetBit(this ushort self, int index)
+		{
+			return Convert.ToBoolean((self >> (index - 1)) & 1);
+		}
+
+		public static ushort GetBits(this ushort self, int amount, int offset = 0)
+		{
+			return (ushort)((self >> offset) & ((1U << amount) - 1));
+		}
+
+		public static ushort SetBit(this ushort self, int index)
+		{
+			return (ushort)(self | (1U << (index - 1)));
+		}
+
+		public static ushort UnsetBit(this ushort self, int index)
+		{
+			return (ushort)(self & ~(1U << (index - 1)));
+		}
+	}
+
+	public static class ByteBitExtensions
+	{
+		public static bool GetBit(this byte self, int index)
+		{
+			return Convert.ToBoolean((self >> (index - 1)) & 1);
+		}
+
+		public static byte GetBits(this byte self, int amount, int offset = 0)
+		{
+			return (byte)((self >> offset) & ((1U << amount) - 1));
+		}
+
+		public static byte SetBit(this byte self, int index)
+		{
+			return (byte)(self | (1U << (index - 1)));
+		}
+
+		public static byte UnsetBit(this byte self, int index)
+		{
+			return (byte)(self & ~(1U << (index - 1)));
 		}
 	}
 
