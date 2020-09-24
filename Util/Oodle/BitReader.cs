@@ -1,10 +1,7 @@
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Numerics;
-using System.Reflection;
 using PoeTools.Util.ExtensionMethods;
 
 namespace PoeTools.Util.Oodle
@@ -17,9 +14,10 @@ namespace PoeTools.Util.Oodle
 
 		public uint Bits { get => bits; }
 
-		public BitReader(ReadOnlyMemory<byte> bytes, uint bits, int bitPosition)
+		public BitReader(ReadOnlyMemory<byte> bytes, uint bits, int bitPosition, int position = 0)
 		{
 			data = new BinaryReader(new MemoryStream(bytes.ToArray(), false));
+			data.BaseStream.Seek(position, SeekOrigin.Begin);
 			this.bits = bits;
 			this.bitPosition = bitPosition;
 		}
@@ -30,7 +28,7 @@ namespace PoeTools.Util.Oodle
 
 			while (bitPosition > 0)
 			{
-				bits |= (data.BaseStream.Position < data.BaseStream.Length ? data.ReadByte() : (uint)0) << bitPosition;
+				bits |= (data.BaseStream.Position < data.BaseStream.Length ? data.ReadByte() : 0u) << bitPosition;
 				bitPosition -= 8;
 			}
 		}
@@ -51,7 +49,7 @@ namespace PoeTools.Util.Oodle
 		{
 			if (refill) Refill();
 
-			bool result = ((int)bits).SelectBit(32);
+			bool result = bits.GetBit(32);
 			bits <<= 1;
 			bitPosition += 1;
 
@@ -176,12 +174,7 @@ namespace PoeTools.Util.Oodle
 		{
 			Action refill = backwards ? RefillBackwards : Refill;
 			int amount = 31 - BitOperations.LeadingZeroCount(bits);
-
-			if (amount > 12)
-			{
-				// TODO: this is an error
-				return 0;
-			}
+			Debug.Assert(amount <= 12);
 
 			bitPosition += amount;
 			bits <<= amount;
