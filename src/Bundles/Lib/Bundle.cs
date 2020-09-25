@@ -146,8 +146,7 @@ namespace PoeTools.Bundles.Lib {
 			var decompressedBlockSize = index == (blockCount - 1) ? UncompressedSize % uncompressedBlockSize : uncompressedBlockSize;
 			var decompressionBuffer = new byte[decompressedBlockSize + 64];
 
-			//int actualDecompressedSize = LibOoz.Ooz_Decompress(block.ToArray(), block.Length, decompressionBuffer, decompressedBlockSize);
-			int actualDecompressedSize = decompressedBlockSize;
+			int actualDecompressedSize = LibOoz.Ooz_Decompress(block.ToArray(), block.Length, decompressionBuffer, decompressedBlockSize);
 
 			if (decompressedBlockSize != actualDecompressedSize) {
 				throw new Exception(string.Format($"Error decompressing block {index} of {blockCount}. Expected {decompressedBlockSize} bytes, but got {actualDecompressedSize} bytes"));
