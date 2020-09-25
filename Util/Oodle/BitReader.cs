@@ -8,16 +8,21 @@ namespace PoeTools.Util.Oodle
 {
 	internal class BitReader
 	{
-		private readonly BinaryReader data;
+		private readonly ReadOnlyMemory<byte> data;
+		private readonly BinaryReader reader;
 		private uint bits;
 		private int bitPosition;
 
+		public ReadOnlyMemory<byte> Source { get => data; }
 		public uint Bits { get => bits; }
+		public int BitPosition { get => bitPosition; }
+		public int DataPosition { get => (int)reader.BaseStream.Position; }
 
-		public BitReader(ReadOnlyMemory<byte> bytes, uint bits, int bitPosition, int position = 0)
+		public BitReader(ReadOnlyMemory<byte> data, uint bits, int bitPosition, int initialPosition = 0)
 		{
-			data = new BinaryReader(new MemoryStream(bytes.ToArray(), false));
-			data.BaseStream.Seek(position, SeekOrigin.Begin);
+			this.data = data;
+			reader = new BinaryReader(new MemoryStream(data.ToArray(), false));
+			reader.BaseStream.Seek(initialPosition, SeekOrigin.Begin);
 			this.bits = bits;
 			this.bitPosition = bitPosition;
 		}
@@ -28,7 +33,7 @@ namespace PoeTools.Util.Oodle
 
 			while (bitPosition > 0)
 			{
-				bits |= (data.BaseStream.Position < data.BaseStream.Length ? data.ReadByte() : 0u) << bitPosition;
+				bits |= (reader.BaseStream.Position < reader.BaseStream.Length ? reader.ReadByte() : 0u) << bitPosition;
 				bitPosition -= 8;
 			}
 		}
@@ -39,8 +44,8 @@ namespace PoeTools.Util.Oodle
 
 			while (bitPosition > 0)
 			{
-				data.BaseStream.Seek(-1, SeekOrigin.Current);
-				bits |= (data.BaseStream.Position >= data.BaseStream.Length ? (uint)data.PeekChar() : 0) << bitPosition;
+				reader.BaseStream.Seek(-1, SeekOrigin.Current);
+				bits |= (reader.BaseStream.Position >= reader.BaseStream.Length ? (uint)reader.PeekChar() : 0) << bitPosition;
 				bitPosition -= 8;
 			}
 		}
@@ -187,6 +192,37 @@ namespace PoeTools.Util.Oodle
 			refill();
 
 			return result;
+		}
+
+		public int ReadFluff(int symbolCount)
+		{
+			if (symbolCount == 256)
+			{
+				return 0;
+			}
+
+			uint x = (uint)(257 - symbolCount);
+			if (x > symbolCount)
+			{
+				x = (uint)symbolCount;
+			}
+			x <<= 1;
+
+			int zeroes = BitOperations.LeadingZeroCount(x - 1) + 1;
+
+			uint v = bits >> (32 - zeroes);
+			uint z = (1u << zeroes) - x;
+
+			if ((v >> 1) >= z)
+			{
+				bits <<= zeroes;
+				bitPosition += zeroes;
+				return (int)(v - z);
+			}
+
+			bits <<= zeroes - 1;
+			bitPosition += zeroes - 1;
+			return (int)(v >> 1);
 		}
 	}
 }

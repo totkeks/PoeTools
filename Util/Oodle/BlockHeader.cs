@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using PoeTools.Util.ExtensionMethods;
 
 namespace PoeTools.Util.Oodle
@@ -19,14 +20,14 @@ namespace PoeTools.Util.Oodle
 			var lowerNibble = firstByte.GetBits(4);
 			if (lowerNibble != MAGIC_NUMBER)
 			{
-				throw new Exception($"Invalid lower nibble in magic byte. Expected 0x{MAGIC_NUMBER:X}, got 0x{lowerNibble:X}");
+				throw new InvalidDataException($"Invalid lower nibble in magic byte. Expected 0x{MAGIC_NUMBER:X}, got 0x{lowerNibble:X}");
 			}
 
 			var upperNibble = firstByte.GetBits(4, 4);
 			var lowerTwoBits = IntBitExtensions.GetBits(upperNibble, (int)2);
 			if (lowerTwoBits != 0)
 			{
-				throw new Exception($"Invalid upper nibble in magic byte. Expected lower two bits to be 0, got {Convert.ToString(lowerTwoBits, 2),2}");
+				throw new InvalidDataException($"Invalid upper nibble in magic byte. Expected lower two bits to be 0, got {Convert.ToString(lowerTwoBits, 2),2}");
 			}
 
 			var uncompressed = upperNibble.GetBit(3);
@@ -35,11 +36,6 @@ namespace PoeTools.Util.Oodle
 			var secondByte = source[1..2].Span[0];
 			var decoderType = (DecoderType)secondByte.GetBits(7);
 			var useChecksums = secondByte.GetBit(8);
-
-			if (!Enum.IsDefined(typeof(DecoderType), decoderType))
-			{
-				throw new Exception($"Unsupported decoder type {decoderType}");
-			}
 
 			blockHeader = new BlockHeader(decoderType, restartDecoder, uncompressed, useChecksums);
 

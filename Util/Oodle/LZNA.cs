@@ -21,7 +21,7 @@ namespace PoeTools.Util.Oodle
 				{
 					b = source[offset..1].Span[0];
 					offset += 1;
-					if (b.SelectBit(8))
+					if (b.GetBit(8))
 					{
 						break;
 					}

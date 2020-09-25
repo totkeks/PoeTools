@@ -173,30 +173,4 @@ namespace PoeTools.Util.ExtensionMethods
 			return (byte)(self & ~(1U << (index - 1)));
 		}
 	}
-
-	public static class Word
-	{
-		public static ushort FromBytes(byte two, byte one)
-		{
-			return (ushort)(two << 8 | one);
-		}
-	}
-
-	public static class DWord
-	{
-		public static int FromBytes(byte two, byte one)
-		{
-			return FromBytes(0, 0, two, one);
-		}
-
-		public static int FromBytes(byte three, byte two, byte one)
-		{
-			return FromBytes(0, three, two, one);
-		}
-
-		public static int FromBytes(byte four, byte three, byte two, byte one)
-		{
-			return four << 24 | three << 16 | two << 8 | one;
-		}
-	}
 }
