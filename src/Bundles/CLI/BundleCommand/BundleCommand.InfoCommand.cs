@@ -18,6 +18,7 @@ namespace PoeTools.Bundles.CLI {
 
 				Console.WriteLine($"Name:              {bundle.Name}");
 				Console.WriteLine($"Blocks:            {bundle.BlockCount}");
+				Console.WriteLine($"Compressed size:   {bundle.CompressedSize} bytes");
 				Console.WriteLine($"Uncompressed size: {bundle.UncompressedSize} bytes");
 			}
 		}

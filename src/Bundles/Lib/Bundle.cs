@@ -29,9 +29,9 @@ namespace PoeTools.Bundles.Lib {
 		private List<Memory<byte>> compressedDataBlocks;
 		private Memory<byte> decompressedData;
 
-		public string Name => name;
-
-		public int UncompressedSize { get => uncompressedSize; set => uncompressedSize = value; }
+		public string Name { get => name; }
+		public int CompressedSize { get => dataSize; }
+		public int UncompressedSize { get => uncompressedSize; }
 		public int BlockCount { get => blockCount; }
 
 		/// <summary>
@@ -97,7 +97,7 @@ namespace PoeTools.Bundles.Lib {
 		}
 
 		private void ReadPreamble(BinaryReader reader) {
-			UncompressedSize = reader.ReadInt32();
+			uncompressedSize = reader.ReadInt32();
 			dataSize = reader.ReadInt32();
 			reader.ReadInt32(); // headerSize
 		}
