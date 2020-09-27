@@ -12,12 +12,12 @@ namespace PoeTools.Bundles.CLI {
 			}
 
 			private static void ExecuteCommand(FileInfo indexFile) {
-				//var index = new Index(indexFile.FullName);
+				var index = new Lib.Index(indexFile.FullName);
 
-				//Console.WriteLine($"Name:              {bundle.Name}");
-				//Console.WriteLine($"Blocks:            {bundle.BlockCount}");
-				//Console.WriteLine($"Uncompressed size: {bundle.UncompressedSize} bytes");
-				Console.WriteLine("Executing index.info command");
+				Console.WriteLine($"Name:        {indexFile.Name}");
+				Console.WriteLine($"Bundles:     {index.BundleCount}");
+				Console.WriteLine($"Directories: {index.DirectoryCount}");
+				Console.WriteLine($"Files:       {index.FileCount}");
 			}
 		}
 	}
