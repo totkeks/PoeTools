@@ -12,9 +12,11 @@ namespace PoeTools.Bundles.CLI {
 			}
 
 			private static void ExecuteCommand(FileInfo indexFile) {
-				//var index = new Index(indexFile.FullName);
+				var index = new Lib.Index(indexFile.FullName);
 
-				Console.WriteLine("Executing index.files command");
+				foreach (var path in index.GetAllFilePaths()) {
+					Console.WriteLine(path);
+				}
 			}
 		}
 	}
