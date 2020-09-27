@@ -2,6 +2,9 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
+using System.Linq;
+
+using DotNet.Globbing;
 
 namespace PoeTools.Bundles.CLI {
 	partial class IndexCommand {
@@ -16,9 +19,23 @@ namespace PoeTools.Bundles.CLI {
 			}
 
 			private static void ExecuteCommand(FileInfo indexFile, string pathSpec, bool flat, DirectoryInfo output) {
-				//var index = new Index(indexFile.FullName);
+				var globOptions = new GlobOptions();
+				globOptions.Evaluation.CaseInsensitive = true;
+				var glob = Glob.Parse(pathSpec, globOptions);
 
-				Console.WriteLine("Executing index.extract command");
+				string outputDirectory = output?.FullName ?? Directory.GetCurrentDirectory();
+				var index = new Lib.Index(indexFile.FullName);
+
+				var files = index.GetAllFilePaths().Where(path => glob.IsMatch(path));
+				Console.WriteLine($"Extracting {files.Count()} matching files");
+
+				foreach (var file in files) {
+					var content = index.GetFile(file);
+					var outputFilePath = Path.Combine(outputDirectory, flat ? Path.GetFileName(file) : file);
+
+					Directory.CreateDirectory(Path.GetDirectoryName(outputFilePath));
+					File.WriteAllBytes(outputFilePath, content.ToArray());
+				}
 			}
 		}
 	}
