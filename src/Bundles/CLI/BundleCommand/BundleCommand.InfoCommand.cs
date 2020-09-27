@@ -1,6 +1,4 @@
-﻿using PoeTools.Bundles.Lib;
-
-using System;
+﻿using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
@@ -14,7 +12,7 @@ namespace PoeTools.Bundles.CLI {
 			}
 
 			private static void ExecuteCommand(FileInfo bundleFile) {
-				var bundle = new Bundle(bundleFile.FullName);
+				var bundle = new Lib.Bundle(bundleFile.FullName);
 
 				Console.WriteLine($"Name:              {bundle.Name}");
 				Console.WriteLine($"Blocks:            {bundle.BlockCount}");

@@ -10,36 +10,25 @@ namespace PoeTools.Bundles.Lib {
 	/// Typically contained inside a <c>.bundle.bin</c> file, but can also come from memory.
 	/// </summary>
 	public class Bundle {
-		private readonly string name;
-
-		private int uncompressedSize;
-		private int dataSize;
-		/* private int headerSize; */
-
-		/* private CompressionAlgorithm compressionAlgorithm; */
-		/* private uint unknown1; */
 		private long uncompressedSizeL;
 		private long dataSizeL;
-		private int blockCount;
 		private int uncompressedBlockSize;
-		/* private ulong unknown2; */
-		/* private ulong unknown3; */
 		private int[] blockSizes;
 
 		private List<Memory<byte>> compressedDataBlocks;
 		private Memory<byte> decompressedData;
 
-		public string Name { get => name; }
-		public int CompressedSize { get => dataSize; }
-		public int UncompressedSize { get => uncompressedSize; }
-		public int BlockCount { get => blockCount; }
+		public string Name { get; }
+		public int CompressedSize { get; private set; }
+		public int UncompressedSize { get; private set; }
+		public int BlockCount { get; private set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Bundle"/> class with data from a specified file.
 		/// </summary>
 		/// <param name="filePath">The path to the bundle file.</param>
 		public Bundle(string filePath) : this(
-			new FileStream(filePath, FileMode.Open),
+			new BinaryReader(new FileStream(filePath, FileMode.Open)),
 			Path.GetFileName(filePath).Replace(".bundle.bin", "")
 		) { }
 
@@ -48,19 +37,18 @@ namespace PoeTools.Bundles.Lib {
 		/// </summary>
 		/// <param name="stream">The stream containing the bundle.</param>
 		/// <param name="name">The name of the bundle.</param>
-		public Bundle(Stream stream, string name = "-in-memory-") {
-			this.name = name;
+		public Bundle(BinaryReader reader, string name = "-in-memory-") {
+			Name = name;
 
-			using BinaryReader reader = new BinaryReader(stream);
 			ReadPreamble(reader);
 			ReadHeader(reader);
 			ReadCompressedData(reader);
 
 			// Sanity checks
 			Debug.Assert(UncompressedSize == uncompressedSizeL, "Uncompressed sizes are not equal");
-			Debug.Assert(dataSize == dataSizeL, "Data sizes are not equal");
-			Debug.Assert(blockSizes.Sum() == dataSize, "Sum of blocks doesn't match data size");
-			Debug.Assert(compressedDataBlocks.Count == blockCount, "Block count does not match");
+			Debug.Assert(CompressedSize == dataSizeL, "Data sizes are not equal");
+			Debug.Assert(blockSizes.Sum() == CompressedSize, "Sum of blocks doesn't match data size");
+			Debug.Assert(compressedDataBlocks.Count == BlockCount, "Block count does not match");
 			Debug.Assert(reader.Read() == -1, "End of file not reached after reading all blocks");
 		}
 
@@ -93,12 +81,12 @@ namespace PoeTools.Bundles.Lib {
 
 		/// <inheritdoc/>
 		public override string ToString() {
-			return string.Format($"Bundle '{Name}' with {blockCount} blocks");
+			return string.Format($"Bundle '{Name}' with {BlockCount} blocks");
 		}
 
 		private void ReadPreamble(BinaryReader reader) {
-			uncompressedSize = reader.ReadInt32();
-			dataSize = reader.ReadInt32();
+			UncompressedSize = reader.ReadInt32();
+			CompressedSize = reader.ReadInt32();
 			reader.ReadInt32(); // headerSize
 		}
 
@@ -107,13 +95,13 @@ namespace PoeTools.Bundles.Lib {
 			reader.ReadUInt32(); // unknown1
 			uncompressedSizeL = reader.ReadInt64();
 			dataSizeL = reader.ReadInt64();
-			blockCount = reader.ReadInt32();
+			BlockCount = reader.ReadInt32();
 			uncompressedBlockSize = reader.ReadInt32();
 			reader.ReadUInt64(); // unknown2
 			reader.ReadUInt64(); // unknown3
 
-			blockSizes = new int[blockCount];
-			for (int ii = 0; ii < blockCount; ii++) {
+			blockSizes = new int[BlockCount];
+			for (int ii = 0; ii < BlockCount; ii++) {
 				blockSizes[ii] = reader.ReadInt32();
 			}
 		}
@@ -121,7 +109,7 @@ namespace PoeTools.Bundles.Lib {
 		private void ReadCompressedData(BinaryReader reader) {
 			compressedDataBlocks = new List<Memory<byte>>();
 
-			for (int ii = 0; ii < blockCount; ii++) {
+			for (int ii = 0; ii < BlockCount; ii++) {
 				compressedDataBlocks.Add(reader.ReadBytes(blockSizes[ii]));
 			}
 		}
@@ -143,13 +131,13 @@ namespace PoeTools.Bundles.Lib {
 			}
 
 			var decompressedBlockStart = uncompressedBlockSize * index;
-			var decompressedBlockSize = index == (blockCount - 1) ? UncompressedSize % uncompressedBlockSize : uncompressedBlockSize;
+			var decompressedBlockSize = index == (BlockCount - 1) ? UncompressedSize % uncompressedBlockSize : uncompressedBlockSize;
 			var decompressionBuffer = new byte[decompressedBlockSize + 64];
 
 			int actualDecompressedSize = LibOoz.Ooz_Decompress(block.ToArray(), block.Length, decompressionBuffer, decompressedBlockSize);
 
 			if (decompressedBlockSize != actualDecompressedSize) {
-				throw new Exception(string.Format($"Error decompressing block {index} of {blockCount}. Expected {decompressedBlockSize} bytes, but got {actualDecompressedSize} bytes"));
+				throw new Exception(string.Format($"Error decompressing block {index} of {BlockCount}. Expected {decompressedBlockSize} bytes, but got {actualDecompressedSize} bytes"));
 			}
 
 			var targetBuffer = decompressedData.Slice(decompressedBlockStart, decompressedBlockSize);
