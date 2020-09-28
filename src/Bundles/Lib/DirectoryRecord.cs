@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace PoeTools.Bundles.Lib {
@@ -21,7 +18,6 @@ namespace PoeTools.Bundles.Lib {
 
 		public List<string> GetFilePaths(Bundle bundle) {
 			var reader = new BinaryReader(new MemoryStream(bundle.GetContent(Offset, Size).ToArray()));
-			Debug.Assert(reader.ReadUInt32() == 0, "Path templates not starting with 0-word");
 
 			var templates = BuildPathTemplates(reader);
 			return BuildFilePaths(reader, templates);
@@ -30,15 +26,19 @@ namespace PoeTools.Bundles.Lib {
 		private static Dictionary<int, string> BuildPathTemplates(BinaryReader reader) {
 			var templates = new Dictionary<int, string>();
 			string nextPath = string.Empty;
-			int word;
+			int dword = reader.ReadInt32();
 
-			while ((word = reader.ReadInt32()) > 0) {
+			if (dword != 0) {
+				throw new InvalidDataException($"Error building path templates: expected first dword to be 0, was {dword} instead");
+			}
+
+			while ((dword = reader.ReadInt32()) > 0) {
 				if (templates.Count == 0) {
-					templates.Add(word, ReadNullTerminatedString(reader));
+					templates.Add(dword, ReadNullTerminatedString(reader));
 
 				} else {
-					if (templates.ContainsKey(word)) {
-						nextPath += templates[word];
+					if (templates.ContainsKey(dword)) {
+						nextPath += templates[dword];
 					}
 
 					nextPath += ReadNullTerminatedString(reader);

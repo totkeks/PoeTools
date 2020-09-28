@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -45,11 +44,15 @@ namespace PoeTools.Bundles.Lib {
 			ReadCompressedData(reader);
 
 			// Sanity checks
-			Debug.Assert(UncompressedSize == uncompressedSizeL, "Uncompressed sizes are not equal");
-			Debug.Assert(CompressedSize == dataSizeL, "Data sizes are not equal");
-			Debug.Assert(blockSizes.Sum() == CompressedSize, "Sum of blocks doesn't match data size");
-			Debug.Assert(compressedDataBlocks.Count == BlockCount, "Block count does not match");
-			Debug.Assert(reader.Read() == -1, "End of file not reached after reading all blocks");
+			if (UncompressedSize != uncompressedSizeL) {
+				throw new InvalidDataException($"Error reading bundle: uncompressed sizes are not equal. {UncompressedSize} vs {uncompressedSizeL}");
+			}
+			if (CompressedSize != dataSizeL) {
+				throw new InvalidDataException($"Error reading bundle: compressed sizes are not equal. {CompressedSize} vs {dataSizeL}");
+			}
+			if (blockSizes.Sum() != CompressedSize) {
+				throw new InvalidDataException($"Error reading bundle: sum of blocks does not match data size. {blockSizes.Sum()} vs {CompressedSize}");
+			}
 		}
 
 		/// <summary>
