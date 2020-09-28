@@ -1,6 +1,7 @@
 <Project>
 	<PropertyGroup>
-		<BaseOutputPath>$(SolutionDir)\bin\$(MSBuildProjectName)\</BaseOutputPath>
-		<BaseIntermediateOutputPath>$(SolutionDir)\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<BaseOutputPath>$(MSBuildThisFileDirectory)bin\$(MSBuildProjectName)\</BaseOutputPath>
+		<BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<PublishDir>$(MSBuildThisFileDirectory)artifacts</PublishDir>
 	</PropertyGroup>
 </Project>
