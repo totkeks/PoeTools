@@ -1,7 +1,9 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Parsing;
 
-namespace PoeTools.Bundles.CLI {
+using PoETool.CLI.Commands;
+
+namespace PoETool.CLI {
 	class Program {
 		static int Main(string[] args) {
 			var rootCommand = new RootCommand("CLI for Path of Exile binary bundles and indices.");

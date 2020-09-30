@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace PoeTools.Bundles.Lib {
+namespace PoETool.FileTypes.Index {
 	public class FileRecord {
 		public ulong Hash { get; }
 		public int BundleIndex { get; }

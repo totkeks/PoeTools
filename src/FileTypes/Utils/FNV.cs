@@ -1,4 +1,4 @@
-namespace PoeTools.Bundles.Lib {
+namespace PoETool.FileTypes.Utils {
 	using System.Text;
 
 	/// <summary>

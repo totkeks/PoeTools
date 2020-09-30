@@ -5,12 +5,15 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace PoeTools.Bundles.Lib {
+using PoETool.FileTypes.Bundle;
+using PoETool.FileTypes.Utils;
+
+namespace PoETool.FileTypes.Index {
 	/// <summary>
 	/// A binary index that references slices inside bundles and maps them to file names.<br/>
 	/// Typically contained inside a <c>.index.bin</c> file.
 	/// </summary>
-	public class Index {
+	public class IndexFile {
 		private readonly string baseDirectory;
 		private readonly string name;
 
@@ -23,16 +26,16 @@ namespace PoeTools.Bundles.Lib {
 		public int DirectoryCount { get => directoryRecords.Count; }
 		private List<DirectoryRecord> directoryRecords;
 
-		private ImmutableList<Lazy<Bundle>> bundles;
+		private ImmutableList<Lazy<BundleFile>> bundles;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Index"/> class with data from a specified file.
+		/// Initializes a new instance of the <see cref="IndexFile"/> class with data from a specified file.
 		/// </summary>
 		/// <param name="filePath">The path to the index file.</param>
-		public Index(string filePath) {
+		public IndexFile(string filePath) {
 			baseDirectory = Path.GetDirectoryName(filePath);
 			name = Path.GetFileName(filePath);
-			Bundle bundle = new Bundle(filePath);
+			BundleFile bundle = new BundleFile(filePath);
 
 			// TODO: improve work with ReadOnlySpan
 			using BinaryReader reader = new BinaryReader(new MemoryStream(bundle.GetContent().ToArray(), false));
@@ -106,7 +109,7 @@ namespace PoeTools.Bundles.Lib {
 		}
 
 		private void MapFilePathsToRecords(BinaryReader reader) {
-			var bundle = new Bundle(reader, "Directories");
+			var bundle = new BundleFile(reader, "Directories");
 
 			foreach (var directoryRecord in directoryRecords) {
 				foreach (var filePath in directoryRecord.GetFilePaths(bundle)) {
@@ -117,12 +120,12 @@ namespace PoeTools.Bundles.Lib {
 		}
 
 		private void InitializeBundles() {
-			var temp = new List<Lazy<Bundle>>(BundleCount);
+			var temp = new List<Lazy<BundleFile>>(BundleCount);
 
 			for (int ii = 0; ii < BundleCount; ii++) {
 				int index = ii;
-				temp.Add(new Lazy<Bundle>(
-					() => new Bundle(Path.Combine(baseDirectory, bundleRecords[index].Name)), LazyThreadSafetyMode.ExecutionAndPublication));
+				temp.Add(new Lazy<BundleFile>(
+					() => new BundleFile(Path.Combine(baseDirectory, bundleRecords[index].Name)), LazyThreadSafetyMode.ExecutionAndPublication));
 			}
 
 			bundles = temp.ToImmutableList();

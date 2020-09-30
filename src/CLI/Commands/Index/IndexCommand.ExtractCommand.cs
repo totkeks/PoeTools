@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 
 using DotNet.Globbing;
 
-namespace PoeTools.Bundles.CLI {
+using PoETool.FileTypes.Index;
+
+namespace PoETool.CLI.Commands {
 	partial class IndexCommand {
 		private class ExtractCommand : Command {
 			public ExtractCommand() : base("extract", "Extract one or multiple files from referenced bundles to the current directory") {
@@ -26,7 +28,7 @@ namespace PoeTools.Bundles.CLI {
 				var glob = Glob.Parse(pathSpec, globOptions);
 
 				string outputDirectory = output?.FullName ?? Directory.GetCurrentDirectory();
-				var index = new Lib.Index(indexFile.FullName);
+				var index = new IndexFile(indexFile.FullName);
 
 				var files = index.GetAllFilePaths().Where(path => glob.IsMatch(path));
 				Console.WriteLine($"Extracting {files.Count()} matching files");
@@ -41,7 +43,7 @@ namespace PoeTools.Bundles.CLI {
 				}
 			}
 
-			private static void ExtractFile(Lib.Index index, string file, string outputDirectory, bool flat) {
+			private static void ExtractFile(IndexFile index, string file, string outputDirectory, bool flat) {
 				var content = index.GetFile(file);
 				var outputFilePath = Path.Combine(outputDirectory, flat ? Path.GetFileName(file) : file);
 

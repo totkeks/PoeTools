@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text;
 
-namespace PoeTools.Bundles.Lib {
+namespace PoETool.FileTypes.Index {
 	public class BundleRecord {
 		public int UncompressedSize { get; }
 		public string Name { get; }

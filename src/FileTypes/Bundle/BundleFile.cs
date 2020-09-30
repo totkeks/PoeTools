@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace PoeTools.Bundles.Lib {
+using PoETool.FileTypes.Utils;
+
+namespace PoETool.FileTypes.Bundle {
 	/// <summary>
 	/// A binary bundle with a header and compressed data.<br/>
 	/// Typically contained inside a <c>.bundle.bin</c> file, but can also come from memory.
 	/// </summary>
-	public class Bundle {
+	public class BundleFile {
 		private long uncompressedSizeL;
 		private long dataSizeL;
 		private int uncompressedBlockSize;
@@ -23,20 +25,20 @@ namespace PoeTools.Bundles.Lib {
 		public int BlockCount { get; private set; }
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Bundle"/> class with data from a specified file.
+		/// Initializes a new instance of the <see cref="BundleFile"/> class with data from a specified file.
 		/// </summary>
 		/// <param name="filePath">The path to the bundle file.</param>
-		public Bundle(string filePath) : this(
+		public BundleFile(string filePath) : this(
 			new BinaryReader(new FileStream(filePath, FileMode.Open)),
 			Path.GetFileName(filePath).Replace(".bundle.bin", "")
 		) { }
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Bundle"/> class with data from a stream.
+		/// Initializes a new instance of the <see cref="BundleFile"/> class with data from a stream.
 		/// </summary>
 		/// <param name="stream">The stream containing the bundle.</param>
 		/// <param name="name">The name of the bundle.</param>
-		public Bundle(BinaryReader reader, string name = "-in-memory-") {
+		public BundleFile(BinaryReader reader, string name = "-in-memory-") {
 			Name = name;
 
 			ReadPreamble(reader);

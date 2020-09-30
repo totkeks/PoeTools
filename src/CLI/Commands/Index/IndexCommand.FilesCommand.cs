@@ -3,7 +3,9 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 
-namespace PoeTools.Bundles.CLI {
+using PoETool.FileTypes.Index;
+
+namespace PoETool.CLI.Commands {
 	partial class IndexCommand {
 		private class FilesCommand : Command {
 			public FilesCommand() : base("files", "List all files referenced by this index") {
@@ -12,7 +14,7 @@ namespace PoeTools.Bundles.CLI {
 			}
 
 			private static void ExecuteCommand(FileInfo indexFile) {
-				var index = new Lib.Index(indexFile.FullName);
+				var index = new IndexFile(indexFile.FullName);
 
 				foreach (var path in index.GetAllFilePaths()) {
 					Console.WriteLine(path);

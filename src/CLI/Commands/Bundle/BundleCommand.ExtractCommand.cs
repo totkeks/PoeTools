@@ -1,4 +1,4 @@
-﻿using PoeTools.Bundles.Lib;
+﻿using PoETool.FileTypes.Bundle;
 
 using System;
 using System.CommandLine;
@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 using Slice = System.Tuple<int, int>;
 
-namespace PoeTools.Bundles.CLI {
+namespace PoETool.CLI.Commands {
 	partial class BundleCommand {
 		private class ExtractCommand : Command {
 			public ExtractCommand() : base("extract", "Extract data from the bundle") {
@@ -26,7 +26,7 @@ namespace PoeTools.Bundles.CLI {
 			}
 
 			private static void ExecuteCommand(FileInfo bundleFile, FileInfo outputFile, bool all, int block, string slice) {
-				var bundle = new Bundle(bundleFile.FullName);
+				var bundle = new BundleFile(bundleFile.FullName);
 				ReadOnlyMemory<byte> data;
 
 				if (all) {

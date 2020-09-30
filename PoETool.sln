@@ -10,9 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI", "src\Bundles\CLI\CLI.csproj", "{8228BE9A-93D6-40A9-B786-5866EDD732FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI", "src\CLI\CLI.csproj", "{8228BE9A-93D6-40A9-B786-5866EDD732FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib", "src\Bundles\Lib\Lib.csproj", "{1EA1FB5F-A517-41DF-8C6D-E00BC80DB88D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileTypes", "src\FileTypes\FileTypes.csproj", "{1EA1FB5F-A517-41DF-8C6D-E00BC80DB88D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

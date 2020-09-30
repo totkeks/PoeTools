@@ -3,7 +3,9 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 
-namespace PoeTools.Bundles.CLI {
+using PoETool.FileTypes.Bundle;
+
+namespace PoETool.CLI.Commands {
 	partial class BundleCommand {
 		private class InfoCommand : Command {
 			public InfoCommand() : base("info", "Display information about the bundle") {
@@ -12,7 +14,7 @@ namespace PoeTools.Bundles.CLI {
 			}
 
 			private static void ExecuteCommand(FileInfo bundleFile) {
-				var bundle = new Lib.Bundle(bundleFile.FullName);
+				var bundle = new BundleFile(bundleFile.FullName);
 
 				Console.WriteLine($"Name:              {bundle.Name}");
 				Console.WriteLine($"Blocks:            {bundle.BlockCount}");

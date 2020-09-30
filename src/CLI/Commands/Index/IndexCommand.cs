@@ -1,7 +1,7 @@
 ﻿using System.CommandLine;
 using System.IO;
 
-namespace PoeTools.Bundles.CLI {
+namespace PoETool.CLI.Commands {
 	partial class IndexCommand : Command {
 		public IndexCommand() : base("index", "Access index.bin files") {
 			AddAlias("i");

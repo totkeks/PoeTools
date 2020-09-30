@@ -3,7 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace PoeTools.Bundles.Lib {
+using PoETool.FileTypes.Bundle;
+
+namespace PoETool.FileTypes.Index {
 	public class DirectoryRecord {
 		public ulong Hash { get; }
 		public int Offset { get; }
@@ -16,7 +18,7 @@ namespace PoeTools.Bundles.Lib {
 			reader.ReadUInt32(); // Unknown
 		}
 
-		public List<string> GetFilePaths(Bundle bundle) {
+		public List<string> GetFilePaths(BundleFile bundle) {
 			var reader = new BinaryReader(new MemoryStream(bundle.GetContent(Offset, Size).ToArray()));
 
 			var templates = BuildPathTemplates(reader);

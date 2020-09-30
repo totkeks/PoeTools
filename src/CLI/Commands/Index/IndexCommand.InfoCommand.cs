@@ -3,7 +3,9 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 
-namespace PoeTools.Bundles.CLI {
+using PoETool.FileTypes.Index;
+
+namespace PoETool.CLI.Commands {
 	partial class IndexCommand {
 		private class InfoCommand : Command {
 			public InfoCommand() : base("info", "Display information about the index") {
@@ -12,7 +14,7 @@ namespace PoeTools.Bundles.CLI {
 			}
 
 			private static void ExecuteCommand(FileInfo indexFile) {
-				var index = new Lib.Index(indexFile.FullName);
+				var index = new IndexFile(indexFile.FullName);
 
 				Console.WriteLine($"Name:        {indexFile.Name}");
 				Console.WriteLine($"Bundles:     {index.BundleCount}");
