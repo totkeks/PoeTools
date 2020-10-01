@@ -1,6 +1,6 @@
 # Bundle
 
-A bundle typically uses the `.bundle.bin` file extensions. It contains blocks of compressed data preceded by a fixed size and a variable size header.
+A bundle typically uses the `.bundle.bin` file extension. It contains blocks of compressed data preceded by a fixed size and a variable size header.
 
 ## Fixed size header (Preamble)
 
