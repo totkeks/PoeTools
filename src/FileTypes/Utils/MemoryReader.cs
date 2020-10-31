@@ -1,5 +1,6 @@
 using System;
 using System.Buffers.Binary;
+using System.Text;
 
 namespace PoETool.FileTypes.Utils {
 	public ref struct MemoryReader {
@@ -18,17 +19,63 @@ namespace PoETool.FileTypes.Utils {
 			return slice;
 		}
 
+		public bool ReadBoolean() {
+			return Convert.ToBoolean(Data[Position++]);
+		}
+
+		public byte ReadByte() {
+			return Data[Position++];
+		}
+
+		public short ReadInt16() {
+			return BinaryPrimitives.ReadInt16LittleEndian(Read(2));
+		}
+
+		public int ReadInt32() {
+			return BinaryPrimitives.ReadInt32LittleEndian(Read(4));
+		}
+
+		public uint ReadUInt32() {
+			return BinaryPrimitives.ReadUInt32LittleEndian(Read(4));
+		}
+
+		public long ReadInt64() {
+			return BinaryPrimitives.ReadInt64LittleEndian(Read(8));
+		}
+
+		public ulong ReadUInt64() {
+			return BinaryPrimitives.ReadUInt64LittleEndian(Read(8));
+		}
+
+		public float ReadSingle() {
+			return BinaryPrimitives.ReadSingleLittleEndian(Read(4));
+		}
+
+		public double ReadDouble() {
+			return BinaryPrimitives.ReadDoubleLittleEndian(Read(8));
+		}
+
+		public string ReadString() {
+			int offset = -1;
+
+			while (Data[Position + ++offset] != '\0') { }
+			string str = Encoding.ASCII.GetString(Data.Slice(Position, offset - 1));
+			Position += offset;
+
+			return str;
+		}
+
 		public dynamic Read<T>() where T : struct {
-			return (default(T)) switch
-			{
-				bool => Convert.ToBoolean(Read(1)[0]),
-				byte => Read(1)[0],
-				short => BinaryPrimitives.ReadInt16LittleEndian(Read(2)),
-				int => BinaryPrimitives.ReadInt32LittleEndian(Read(4)),
-				uint => BinaryPrimitives.ReadUInt32LittleEndian(Read(4)),
-				long => BinaryPrimitives.ReadInt64LittleEndian(Read(8)),
-				ulong => BinaryPrimitives.ReadUInt64LittleEndian(Read(8)),
-				float => BinaryPrimitives.ReadSingleLittleEndian(Read(4)),
+			return (default(T)) switch {
+				bool => ReadBoolean(),
+				byte => ReadByte(),
+				short => ReadInt16(),
+				int => ReadInt32(),
+				uint => ReadUInt32(),
+				long => ReadInt64(),
+				ulong => ReadUInt64(),
+				float => ReadSingle(),
+				double => ReadDouble(),
 				_ => throw new NotImplementedException("Type not implemented")
 			};
 		}
