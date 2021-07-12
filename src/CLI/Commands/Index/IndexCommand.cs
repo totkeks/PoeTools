@@ -12,6 +12,6 @@ namespace PoETool.CLI.Commands {
 			AddCommand(new ExtractCommand());
 		}
 
-		private static readonly Argument<FileInfo> indexFile = new Argument<FileInfo>("indexFile", "Path to the index file");
+		private static readonly Argument<FileInfo> indexFile = new("indexFile", "Path to the index file");
 	}
 }

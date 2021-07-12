@@ -6,6 +6,7 @@ namespace PoETool.FileTypes.Utils {
 	public ref struct MemoryReader {
 		private ReadOnlySpan<byte> Data { get; }
 		public int Position { get; private set; }
+		public int Length { get => Data.Length; }
 
 		public MemoryReader(ReadOnlySpan<byte> data, int position = 0) {
 			Data = data;
@@ -55,10 +56,14 @@ namespace PoETool.FileTypes.Utils {
 			return BinaryPrimitives.ReadDoubleLittleEndian(Read(8));
 		}
 
-		public string ReadString() {
-			int offset = -1;
+		public string ReadString(int length) {
+			return Encoding.UTF8.GetString(Read(length));
+		}
 
-			while (Data[Position + ++offset] != '\0') { }
+		public string ReadNullTerminatedString() {
+			int offset = 0;
+
+			while (Data[Position + offset++] != '\0') { }
 			string str = Encoding.ASCII.GetString(Data.Slice(Position, offset - 1));
 			Position += offset;
 
@@ -66,7 +71,7 @@ namespace PoETool.FileTypes.Utils {
 		}
 
 		public dynamic Read<T>() where T : struct {
-			return (default(T)) switch {
+			return default(T) switch {
 				bool => ReadBoolean(),
 				byte => ReadByte(),
 				short => ReadInt16(),
@@ -78,6 +83,11 @@ namespace PoETool.FileTypes.Utils {
 				double => ReadDouble(),
 				_ => throw new NotImplementedException("Type not implemented")
 			};
+		}
+
+		/// <inheritdoc/>
+		public override string ToString() {
+			return string.Format($"MemoryReader at position {Position} out of {Length}");
 		}
 	}
 }

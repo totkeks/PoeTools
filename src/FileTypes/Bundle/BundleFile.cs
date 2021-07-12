@@ -16,7 +16,7 @@ namespace PoETool.FileTypes.Bundle {
 		private int uncompressedBlockSize;
 		private int[] blockSizes;
 
-		private List<Memory<byte>> compressedDataBlocks;
+		private List<ReadOnlyMemory<byte>> compressedDataBlocks;
 		private Memory<byte> decompressedData;
 
 		public string Name { get; }
@@ -28,22 +28,26 @@ namespace PoETool.FileTypes.Bundle {
 		/// Initializes a new instance of the <see cref="BundleFile"/> class with data from a specified file.
 		/// </summary>
 		/// <param name="filePath">The path to the bundle file.</param>
-		public BundleFile(string filePath) : this(
-			new BinaryReader(new FileStream(filePath, FileMode.Open)),
-			Path.GetFileName(filePath).Replace(".bundle.bin", "")
-		) { }
+		public BundleFile(string filePath) : this(ReadFileToMemory(filePath), Path.GetFileName(filePath).Replace(".bundle.bin", "")) { }
+
+		private static MemoryReader ReadFileToMemory(string filePath) {
+			using FileStream stream = new(filePath, FileMode.Open);
+			Span<byte> buffer = new byte[stream.Length];
+			stream.Read(buffer);
+			return new MemoryReader(buffer);
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BundleFile"/> class with data from a stream.
 		/// </summary>
 		/// <param name="stream">The stream containing the bundle.</param>
 		/// <param name="name">The name of the bundle.</param>
-		public BundleFile(BinaryReader reader, string name = "-in-memory-") {
+		public BundleFile(MemoryReader reader, string name = "-in-memory-") {
 			Name = name;
 
-			ReadPreamble(reader);
-			ReadHeader(reader);
-			ReadCompressedData(reader);
+			ReadPreamble(ref reader);
+			ReadHeader(ref reader);
+			ReadCompressedData(ref reader);
 
 			// Sanity checks
 			if (UncompressedSize != uncompressedSizeL) {
@@ -89,13 +93,13 @@ namespace PoETool.FileTypes.Bundle {
 			return string.Format($"Bundle '{Name}' with {BlockCount} blocks");
 		}
 
-		private void ReadPreamble(BinaryReader reader) {
+		private void ReadPreamble(ref MemoryReader reader) {
 			UncompressedSize = reader.ReadInt32();
 			CompressedSize = reader.ReadInt32();
 			reader.ReadInt32(); // headerSize
 		}
 
-		private void ReadHeader(BinaryReader reader) {
+		private void ReadHeader(ref MemoryReader reader) {
 			reader.ReadUInt32(); // compressionAlgorithm
 			reader.ReadUInt32(); // unknown1
 			uncompressedSizeL = reader.ReadInt64();
@@ -111,11 +115,12 @@ namespace PoETool.FileTypes.Bundle {
 			}
 		}
 
-		private void ReadCompressedData(BinaryReader reader) {
-			compressedDataBlocks = new List<Memory<byte>>();
+		private void ReadCompressedData(ref MemoryReader reader) {
+			compressedDataBlocks = new List<ReadOnlyMemory<byte>>();
 
 			for (int ii = 0; ii < BlockCount; ii++) {
-				compressedDataBlocks.Add(reader.ReadBytes(blockSizes[ii]));
+				ReadOnlyMemory<byte> block = new(reader.Read(blockSizes[ii]).ToArray());
+				compressedDataBlocks.Add(block);
 			}
 		}
 

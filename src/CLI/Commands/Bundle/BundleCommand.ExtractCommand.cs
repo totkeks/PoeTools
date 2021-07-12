@@ -1,11 +1,11 @@
-﻿using PoETool.FileTypes.Bundle;
-
-using System;
+﻿using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using System.IO;
 using System.Text.RegularExpressions;
+
+using PoETool.FileTypes.Bundle;
 
 using Slice = System.Tuple<int, int>;
 
@@ -44,13 +44,15 @@ namespace PoETool.CLI.Commands {
 			}
 
 			private static string ValidateMutuallyExclusiveOptions(CommandResult commandResult) {
-				if (commandResult.Children.Contains("all") && commandResult.Children.Contains("block")
-						 || commandResult.Children.Contains("all") && commandResult.Children.Contains("slice")
-						 || commandResult.Children.Contains("block") && commandResult.Children.Contains("slice")) {
+				if (commandResult.Children.Contains("all") && commandResult.Children.Contains("block") ||
+					 commandResult.Children.Contains("all") && commandResult.Children.Contains("slice") ||
+					 commandResult.Children.Contains("block") && commandResult.Children.Contains("slice")) {
 					return "Options '--all', '--block' and '--slice' cannot be used together.";
 				}
 
-				if (!commandResult.Children.Contains("all") && !commandResult.Children.Contains("block") && !commandResult.Children.Contains("slice")) {
+				if (!commandResult.Children.Contains("all") &&
+					 !commandResult.Children.Contains("block") &&
+					 !commandResult.Children.Contains("slice")) {
 					return "One of '--all', '--block' or '--slice' must be set.";
 				}
 

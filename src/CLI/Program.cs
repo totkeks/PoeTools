@@ -4,9 +4,9 @@ using System.CommandLine.Parsing;
 using PoETool.CLI.Commands;
 
 namespace PoETool.CLI {
-	class Program {
-		static int Main(string[] args) {
-			var rootCommand = new RootCommand("CLI for Path of Exile binary bundles and indices.");
+	internal class Program {
+		private static int Main(string[] args) {
+			RootCommand rootCommand = new("CLI for Path of Exile binary bundles and indices.");
 
 			rootCommand.AddCommand(new BundleCommand());
 			rootCommand.AddCommand(new IndexCommand());

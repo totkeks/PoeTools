@@ -14,7 +14,7 @@ namespace PoETool.CLI.Commands {
 			}
 
 			private static void ExecuteCommand(FileInfo indexFile) {
-				var index = new IndexFile(indexFile.FullName);
+				var index = new IndexFile(indexFile.FullName, false);
 
 				Console.WriteLine($"Name:        {indexFile.Name}");
 				Console.WriteLine($"Bundles:     {index.BundleCount}");

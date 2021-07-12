@@ -32,19 +32,20 @@ namespace PoETool.FileTypes.Index {
 		/// Initializes a new instance of the <see cref="IndexFile"/> class with data from a specified file.
 		/// </summary>
 		/// <param name="filePath">The path to the index file.</param>
-		public IndexFile(string filePath) {
+		public IndexFile(string filePath, bool init = true) {
 			baseDirectory = Path.GetDirectoryName(filePath);
 			name = Path.GetFileName(filePath);
-			BundleFile bundle = new BundleFile(filePath);
+			BundleFile bundle = new(filePath);
 
-			// TODO: improve work with ReadOnlySpan
-			using BinaryReader reader = new BinaryReader(new MemoryStream(bundle.GetContent().ToArray(), false));
-			ReadBundleRecords(reader);
-			ReadFileRecords(reader);
-			ReadDirectoryRecords(reader);
+			MemoryReader reader = new(bundle.GetContent().Span);
+			ReadBundleRecords(ref reader);
+			ReadFileRecords(ref reader);
+			ReadDirectoryRecords(ref reader);
 
-			MapFilePathsToRecords(reader);
-			InitializeBundles();
+			if (init) {
+				MapFilePathsToRecords(ref reader);
+				InitializeBundles();
+			}
 		}
 
 		/// <summary>
@@ -69,7 +70,7 @@ namespace PoETool.FileTypes.Index {
 		/// <param name="filePath">Path to the file inside the index.</param>
 		/// <returns>A memory segment containing the file contents.</returns>
 		public ReadOnlyMemory<byte> GetFile(string filePath) {
-			var hash = HashFilePath(filePath);
+			var hash = FileRecord.CalculateHash(filePath);
 			var fileRecord = fileRecords[hash];
 
 			return ExtractFileFromBundle(fileRecord);
@@ -80,40 +81,40 @@ namespace PoETool.FileTypes.Index {
 			return $"Index '{name}': {BundleCount} declared bundles, {FileCount} declared files and {DirectoryCount} declared directories";
 		}
 
-		private void ReadBundleRecords(BinaryReader reader) {
+		private void ReadBundleRecords(ref MemoryReader reader) {
 			var bundleCount = reader.ReadInt32();
 			bundleRecords = new List<BundleRecord>(bundleCount);
 
 			for (int ii = 0; ii < bundleCount; ii++) {
-				bundleRecords.Add(new BundleRecord(reader));
+				bundleRecords.Add(new BundleRecord(ref reader));
 			}
 		}
 
-		private void ReadFileRecords(BinaryReader reader) {
+		private void ReadFileRecords(ref MemoryReader reader) {
 			var fileCount = reader.ReadInt32();
 			fileRecords = new Dictionary<ulong, FileRecord>(fileCount);
 
 			for (int ii = 0; ii < fileCount; ii++) {
-				var record = new FileRecord(reader);
+				FileRecord record = new(ref reader);
 				fileRecords.Add(record.Hash, record);
 			}
 		}
 
-		private void ReadDirectoryRecords(BinaryReader reader) {
+		private void ReadDirectoryRecords(ref MemoryReader reader) {
 			var directoryCount = reader.ReadInt32();
 			directoryRecords = new List<DirectoryRecord>(directoryCount);
 
 			for (int ii = 0; ii < directoryCount; ii++) {
-				directoryRecords.Add(new DirectoryRecord(reader));
+				directoryRecords.Add(new DirectoryRecord(ref reader));
 			}
 		}
 
-		private void MapFilePathsToRecords(BinaryReader reader) {
+		private void MapFilePathsToRecords(ref MemoryReader reader) {
 			var bundle = new BundleFile(reader, "Directories");
 
 			foreach (var directoryRecord in directoryRecords) {
 				foreach (var filePath in directoryRecord.GetFilePaths(bundle)) {
-					ulong hash = HashFilePath(filePath);
+					ulong hash = FileRecord.CalculateHash(filePath);
 					fileRecords[hash].Path = filePath;
 				}
 			}
@@ -136,11 +137,6 @@ namespace PoETool.FileTypes.Index {
 
 			return bundle.GetContent(fileRecord.Offset, fileRecord.Size);
 		}
-
-
-		private static ulong HashFilePath(string filePath) => FNV.FNV1a_64(filePath.ToLower() + "++");
-
-		private static ulong HashDirectoryPath(string directoryPath) => FNV.FNV1a_64(directoryPath.ToLower().Trim('/') + "++");
 
 	}
 }

@@ -2,27 +2,17 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <StartupObject>PoETool.CLI.Program</StartupObject>
-    <!-- TODO: there is a bug in the compiler that fails to resolve the correct DLL when running the exe
-    <TargetName>CLI</TargetName>
-    <AssemblyName>poetool</AssemblyName>
-    -->
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNet.Glob" Version="3.1.0" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
+    <PackageReference Include="DotNet.Glob" Version="3.2.0-alpha.33" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FileTypes\FileTypes.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(RuntimeIdentifier)'=='win-x64'">
-    <None Include="..\..\lib\libooz.dll" Link="libooz.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

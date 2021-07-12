@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 using PoETool.FileTypes.Bundle;
+using PoETool.FileTypes.Utils;
 
 namespace PoETool.FileTypes.Index {
 	public class DirectoryRecord {
@@ -11,7 +11,7 @@ namespace PoETool.FileTypes.Index {
 		public int Offset { get; }
 		public int Size { get; }
 
-		public DirectoryRecord(BinaryReader reader) {
+		public DirectoryRecord(ref MemoryReader reader) {
 			Hash = reader.ReadUInt64();
 			Offset = reader.ReadInt32();
 			Size = reader.ReadInt32();
@@ -19,13 +19,13 @@ namespace PoETool.FileTypes.Index {
 		}
 
 		public List<string> GetFilePaths(BundleFile bundle) {
-			var reader = new BinaryReader(new MemoryStream(bundle.GetContent(Offset, Size).ToArray()));
+			MemoryReader reader = new(bundle.GetContent(Offset, Size).Span);
 
-			var templates = BuildPathTemplates(reader);
-			return BuildFilePaths(reader, templates);
+			var templates = BuildPathTemplates(ref reader);
+			return BuildFilePaths(ref reader, templates);
 		}
 
-		private static Dictionary<int, string> BuildPathTemplates(BinaryReader reader) {
+		private static Dictionary<int, string> BuildPathTemplates(ref MemoryReader reader) {
 			var templates = new Dictionary<int, string>();
 			string nextPath = string.Empty;
 			int dword = reader.ReadInt32();
@@ -36,14 +36,14 @@ namespace PoETool.FileTypes.Index {
 
 			while ((dword = reader.ReadInt32()) > 0) {
 				if (templates.Count == 0) {
-					templates.Add(dword, ReadNullTerminatedString(reader));
+					templates.Add(dword, reader.ReadNullTerminatedString());
 
 				} else {
 					if (templates.ContainsKey(dword)) {
 						nextPath += templates[dword];
 					}
 
-					nextPath += ReadNullTerminatedString(reader);
+					nextPath += reader.ReadNullTerminatedString();
 					templates.Add(templates.Keys.Max() + 1, nextPath);
 					nextPath = string.Empty;
 				}
@@ -52,19 +52,19 @@ namespace PoETool.FileTypes.Index {
 			return templates;
 		}
 
-		private static List<string> BuildFilePaths(BinaryReader reader, Dictionary<int, string> templates) {
-			List<string> paths = new List<string>();
+		private static List<string> BuildFilePaths(ref MemoryReader reader, Dictionary<int, string> templates) {
+			List<string> paths = new();
 			string nextPath = string.Empty;
 			int word;
 
-			while (reader.BaseStream.Position < reader.BaseStream.Length) {
+			while (reader.Position < reader.Length) {
 				word = reader.ReadInt32();
 
 				if (templates.ContainsKey(word)) {
 					nextPath += templates[word];
 				}
 
-				nextPath += ReadNullTerminatedString(reader);
+				nextPath += reader.ReadNullTerminatedString();
 				paths.Add(nextPath);
 				nextPath = string.Empty;
 			}
@@ -72,15 +72,6 @@ namespace PoETool.FileTypes.Index {
 			return paths;
 		}
 
-		private static string ReadNullTerminatedString(BinaryReader reader) {
-			var builder = new StringBuilder(256);
-			byte b;
-
-			while ((b = reader.ReadByte()) != '\0') {
-				builder.Append((char)b);
-			}
-
-			return builder.ToString();
-		}
+		public static ulong CalculateHash(string directoryPath) => FNV.FNV1a_64(directoryPath.ToLower().Trim('/') + "++");
 	}
 }

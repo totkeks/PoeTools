@@ -10,6 +10,6 @@ namespace PoETool.CLI.Commands {
 			AddCommand(new ExtractCommand());
 		}
 
-		private static readonly Argument<FileInfo> bundleFile = new Argument<FileInfo>("bundleFile", "Path to the bundle file");
+		private static readonly Argument<FileInfo> bundleFile = new("bundleFile", "Path to the bundle file");
 	}
 }
