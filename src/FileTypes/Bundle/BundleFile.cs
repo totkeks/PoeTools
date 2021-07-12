@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using PoETool.FileTypes.Utils;
+using PathOfExileTools.FileTypes.Utils;
 
-namespace PoETool.FileTypes.Bundle {
+namespace PathOfExileTools.FileTypes.Bundle {
 	/// <summary>
 	/// A binary bundle with a header and compressed data.<br/>
 	/// Typically contained inside a <c>.bundle.bin</c> file, but can also come from memory.

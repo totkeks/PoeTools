@@ -1,6 +1,6 @@
-using PoETool.FileTypes.Utils;
+using PathOfExileTools.FileTypes.Utils;
 
-namespace PoETool.FileTypes.Index {
+namespace PathOfExileTools.FileTypes.Index {
 	/// <summary>
 	/// A bundle record that references a <see cref="Bundle.BundleFile"/> by name.<br/>
 	/// Always part of an <see cref="IndexFile"/>.

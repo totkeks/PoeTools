@@ -3,9 +3,9 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 
-using PoETool.FileTypes.Index;
+using PathOfExileTools.FileTypes.Index;
 
-namespace PoETool.CLI.Commands {
+namespace PathOfExileTools.CLI.Commands {
 	partial class IndexCommand {
 		private class InfoCommand : Command {
 			public InfoCommand() : base("info", "Display information about the index") {

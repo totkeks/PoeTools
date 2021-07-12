@@ -5,10 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-using PoETool.FileTypes.Bundle;
-using PoETool.FileTypes.Utils;
+using PathOfExileTools.FileTypes.Bundle;
+using PathOfExileTools.FileTypes.Utils;
 
-namespace PoETool.FileTypes.Index {
+namespace PathOfExileTools.FileTypes.Index {
 	/// <summary>
 	/// A binary index that references slices inside bundles and maps them to file names.<br/>
 	/// Typically contained inside a <c>.index.bin</c> file.

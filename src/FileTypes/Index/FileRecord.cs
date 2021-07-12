@@ -1,6 +1,6 @@
-using PoETool.FileTypes.Utils;
+using PathOfExileTools.FileTypes.Utils;
 
-namespace PoETool.FileTypes.Index {
+namespace PathOfExileTools.FileTypes.Index {
 	/// <summary>
 	/// A file record that references a slice inside a <see cref="Bundle.BundleFile"/> for its content.<br/>
 	/// Always part of an <see cref="IndexFile"/> for the <see cref="BundleIndex"/>.

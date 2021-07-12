@@ -1,7 +1,7 @@
 ﻿using System.CommandLine;
 using System.IO;
 
-namespace PoETool.CLI.Commands {
+namespace PathOfExileTools.CLI.Commands {
 	partial class BundleCommand : Command {
 		public BundleCommand() : base("bundle", "Access bundles.bin files") {
 			AddAlias("b");

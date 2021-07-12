@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 using DotNet.Globbing;
 
-using PoETool.FileTypes.Index;
+using PathOfExileTools.FileTypes.Index;
 
-namespace PoETool.CLI.Commands {
+namespace PathOfExileTools.CLI.Commands {
 	partial class IndexCommand {
 		private class ExtractCommand : Command {
 			public ExtractCommand() : base("extract", "Extract one or multiple files from referenced bundles to the current directory") {

@@ -2,7 +2,7 @@ using System;
 using System.Buffers.Binary;
 using System.Text;
 
-namespace PoETool.FileTypes.Utils {
+namespace PathOfExileTools.FileTypes.Utils {
 	public ref struct MemoryReader {
 		private ReadOnlySpan<byte> Data { get; }
 		public int Position { get; private set; }

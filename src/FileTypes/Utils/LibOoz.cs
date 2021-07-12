@@ -1,4 +1,4 @@
-namespace PoETool.FileTypes.Utils {
+namespace PathOfExileTools.FileTypes.Utils {
 	using System;
 	using System.Runtime.InteropServices;
 

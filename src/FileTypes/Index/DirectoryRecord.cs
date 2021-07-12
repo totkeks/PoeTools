@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using PoETool.FileTypes.Bundle;
-using PoETool.FileTypes.Utils;
+using PathOfExileTools.FileTypes.Bundle;
+using PathOfExileTools.FileTypes.Utils;
 
-namespace PoETool.FileTypes.Index {
+namespace PathOfExileTools.FileTypes.Index {
 	public class DirectoryRecord {
 		public ulong Hash { get; }
 		public int Offset { get; }

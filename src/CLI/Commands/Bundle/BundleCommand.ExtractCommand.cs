@@ -5,11 +5,11 @@ using System.CommandLine.Parsing;
 using System.IO;
 using System.Text.RegularExpressions;
 
-using PoETool.FileTypes.Bundle;
+using PathOfExileTools.FileTypes.Bundle;
 
 using Slice = System.Tuple<int, int>;
 
-namespace PoETool.CLI.Commands {
+namespace PathOfExileTools.CLI.Commands {
 	partial class BundleCommand {
 		private class ExtractCommand : Command {
 			public ExtractCommand() : base("extract", "Extract data from the bundle") {

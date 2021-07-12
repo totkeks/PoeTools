@@ -3,9 +3,9 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 
-using PoETool.FileTypes.Index;
+using PathOfExileTools.FileTypes.Index;
 
-namespace PoETool.CLI.Commands {
+namespace PathOfExileTools.CLI.Commands {
 	partial class IndexCommand {
 		private class FilesCommand : Command {
 			public FilesCommand() : base("files", "List all files referenced by this index") {
